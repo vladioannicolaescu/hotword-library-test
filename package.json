@@ -11,7 +11,11 @@
     "@mapbox/node-pre-gyp": "^1.0.5",
     "@mathquis/node-personal-wakeword": "^1.1.1",
     "express": "^4.17.1",
+    "fs": "0.0.1-security",
     "mic": "^2.1.2",
-    "stream": "0.0.2"
+    "path": "^0.12.7",
+    "socket.io-stream": "^0.9.1",
+    "stream": "0.0.2",
+    "url": "^0.11.0"
   }
 }

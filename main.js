@@ -2,6 +2,16 @@ import WakewordDetector from '@mathquis/node-personal-wakeword'
 import Mic from 'mic'
 import Stream from 'stream'
 
+import ss from 'socket.io-stream'
+
+import path from 'path';
+import { fileURLToPath } from 'url';
+import fileSystem from 'fs'
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+
 export async function main(req, res) {
   // Create a new wakeword detection engine
   let detector = new WakewordDetector({
@@ -18,7 +28,24 @@ export async function main(req, res) {
     threshold: 0.52 // Per keyword threshold
   })
 
+  await detector.addKeyword('heyGalileo', [
+	  './keywords/heyGalileo1.wav',
+		'./keywords/heyGalileo2.wav',
+		'./keywords/heyGalileo3.wav',
+		'./keywords/heyGalileo4.wav',
+		'./keywords/heyGalileo5.wav',
+		'./keywords/heyGalileo6.wav',
+		'./keywords/heyGalileo7.wav',
+		'./keywords/heyGalileo8.wav',
+		'./keywords/heyGalileo9.wav',
+	  './keywords/heyGalileo10.wav'
+	], {
+	  disableAveraging: true,
+	  threshold: 0
+	})
+
   detector.enableKeyword('abrakadabra')
+  detector.enableKeyword('heyGalileo')
 
   detector.on('ready', () => {
     console.log('listening...')
@@ -62,36 +89,42 @@ export async function main(req, res) {
   })
 
   detector.pipe(detectionStream)
+  // // Create an audio stream from an audio recorder (arecord, sox, etc.)
+  // let recorder = Mic({
+  //   channels      : detector.channels, // Defaults to 1
+  //   rate          : detector.sampleRate, // Defaults to 16000
+  //   bitwidth      : detector.bitLength // Defaults to 16
+  // })
 
-  // *****
-
-  // Create an audio stream from an audio recorder (arecord, sox, etc.)
-  let recorder = Mic({
-    channels      : detector.channels, // Defaults to 1
-    rate          : detector.sampleRate, // Defaults to 16000
-    bitwidth      : detector.bitLength // Defaults to 16
-  })
-
-  let stream = recorder.getAudioStream()
+  // let stream = recorder.getAudioStream()
 
   // Pipe to wakeword detector
-  stream.pipe(detector)
+  // stream.pipe(detector)
+  // console.log(stream)
 
-  recorder.start()
+  const filePath = path.resolve(__dirname, './keywords', './abrakadabra1.wav');
+    // get file info
+   // const stat = fileSystem.statSync(filePath);
+  const readStream = fileSystem.createReadStream(filePath);
+    // pipe stream with response stream
+  readStream.pipe(detector);
+
+  //rss(client).emit('track-stream', stream, { stat });
 
   console.log("Listening for 10 seconds ...")
   // Destroy the recorder and detector after 10s
   setTimeout(() => {
-    stream.unpipe(detector)
-    stream.removeAllListeners()
-    stream.destroy()
-    stream = null
+    // stream.unpipe(detector)
+    // stream.removeAllListeners()
+    // stream.destroy()
+    // stream = null
 
-    recorder = null
+    // recorder = null
 
-    detector.removeAllListeners()
+    // detector.removeAllListeners()
     // detector.destroy()
-    detector = null
+    // detector = null
+    console.log(stream)
     console.log("Finished listening")
     res.status(200).json({ status: 'ok', service: 'Hotword service', text: 'Service running'})
   }, 10000)
