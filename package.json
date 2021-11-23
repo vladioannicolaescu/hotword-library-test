@@ -4,18 +4,37 @@
   "private": true,
   "type": "module",
   "main": "app.js",
+  "jest": {
+    "verbose": true,
+    "moduleDirectories": [
+      "node_modules",
+      "/"
+    ],
+    "moduleFileExtensions": [
+      "js",
+      "mjs"
+    ],
+    "transform": {
+      "^.+\\.[t|j]sx?$": "babel-jest"
+    }
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "dependencies": {
     "@mapbox/node-pre-gyp": "^1.0.5",
     "@mathquis/node-personal-wakeword": "^1.1.1",
     "express": "^4.17.1",
     "fs": "0.0.1-security",
+    "jest": "^27.3.1",
     "mic": "^2.1.2",
     "path": "^0.12.7",
     "socket.io-stream": "^0.9.1",
     "stream": "0.0.2",
     "url": "^0.11.0"
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^7.16.0",
+    "babel-jest": "^27.3.1"
   }
 }
